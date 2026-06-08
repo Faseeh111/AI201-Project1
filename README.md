@@ -13,6 +13,10 @@
      Why is this knowledge valuable, and why is it hard to find through official channels?
      Example: "Student reviews of CS professors at [university] — useful because official
      course descriptions don't reflect teaching style, exam difficulty, or workload." -->
+     It covers a beginners guide to rock climbing. This includes tips for training, how to 
+     prevent injury, explains the grading system, etc. It is useful because this info is
+     scattered all over the place and I as an intermediate climber who just went through 
+     this beginner phase looked through these sources. 
 
 ---
 
@@ -24,16 +28,16 @@
 
 | # | Source | Type | URL or file path |
 |---|--------|------|-----------------|
-| 1 | | | |
-| 2 | | | |
-| 3 | | | |
-| 4 | | | |
-| 5 | | | |
-| 6 | | | |
-| 7 | | | |
-| 8 | | | |
-| 9 | | | |
-| 10 | | | |
+| 1 | REI    | How to Start Climbing | https://www.rei.com/learn/expert-advice/getting-started-rock-climbing.html |
+| 2 | REI    | How to start Bouldering | https://www.rei.com/learn/expert-advice/bouldering.html |
+| 3 | Ascend | Climbing Etiquette | https://www.ascendclimbing.com/your-visit/rules-etiquette?utm_source=chatgpt.com |
+| 4 | SportRock | Climbing Grades | https://www.sportrock.com/post/understanding-climbing-grades |
+| 5 | Climbing Magazine | Climbing Shoes | https://www.climbing.com/gear/best-beginner-climbing-shoes/ |
+| 6 | BreakingInMyShoes | Training Guide | https://breakinginmyshoes.wordpress.com/2013/05/06/climbing-training-for-beginners/ |
+| 7 | 5.Life | Fear of Heights when Climbing | https://5.life/blog/2024/07/26/3-tips-to-overcome-your-fear-of-heights/ |
+| 8 | RockClimbingRealms | Beginner to V4 Guide | https://rockclimbingrealms.com/tips-on-rock-climbing/#:~:text=The%20V3%2DV4%20jump%20is,level%20should%20come%20from%20climbing. |
+| 9 | Butora | When to Hangboard Train | https://butorausa.com/blogs/beta-blog/when-to-hangboard?srsltid=AfmBOoqaYCVU6cLB9bOt8zpHO5GSnzAhkjEPo11FDwtt6wkILMHxVkEE |
+| 10 | Climbing Magazine| Typical Climbing Mistakes | https://www.climbing.com/skills/7-beginner-climber-mistakes/ |
 
 ---
 
@@ -45,10 +49,14 @@
      - Overlap size and why (or why not) you used overlap
      - Any preprocessing you did before chunking (e.g., stripping HTML, removing headers)
      - What your final chunk count was across all documents -->
+     I will use semantic, section-based chunking because most of my sources are educational articles organized by headings and subtopics. Each chunk will contain one heading and the paragraphs under that heading, so information about gear, safety, grades, training, and injury prevention stays together.
 
 **Chunk size:**
+My target chunk size will be about 500–800 words per chunk. This is large enough to keep a full explanation together, but small enough that the retrieval system can return focused results instead of an entire article. If a section is longer than 800 words, I will split it by paragraph into smaller chunks.
+
 
 **Overlap:**
+I will use an overlap of about 75–100 words between chunks when a section has to be split. This helps prevent important context from being lost between two chunks. For shorter sections that fit naturally into one chunk, I will not need overlap.
 
 **Why these choices fit your documents:**
 
