@@ -213,7 +213,7 @@ My target chunk size will be about 300 words per chunk. This is large enough to 
 I will use an overlap of 50 words between chunks when a section has to be split. This helps prevent important context from being lost between two chunks. For shorter sections that fit naturally into one chunk, I will not need overlap.
 
 **Why these choices fit your documents:**
-My documents are all articles and separated by headers and paragraphs
+My documents are all articles and separated by headers and paragraphs each differing in size. Fixed size would not work the best here so I opted for a semantic approach and a decently high chunk/overlap count.
 **Final chunk count:**
 79
 ---
@@ -227,9 +227,10 @@ My documents are all articles and separated by headers and paragraphs
      latency, and local vs. API-hosted. -->
 
 **Model used:**
+I used `all-MiniLM-L6-v2` from the `sentence-transformers` library. I chose it because it runs locally, does not require an API key, is fast enough for a small class project, and works well for semantic search over natural-language guide articles.
 
 **Production tradeoff reflection:**
-
+If I were deploying this system for real users and cost was not a constraint, I would compare stronger embedding models based on accuracy, context length, latency, and multilingual support. Accuracy would matter because users may phrase climbing questions differently than the documents, such as asking about “fear of falling” when the source says “fear of heights.” Context length would matter for longer guide sections, while latency would matter because users expect quick responses. I would also compare local models against API-hosted models: local models are cheaper and more private, but larger API models may give better retrieval quality.
 ---
 
 ## Grounded Generation
@@ -242,9 +243,10 @@ My documents are all articles and separated by headers and paragraphs
      the mechanism. -->
 
 **System prompt grounding instruction:**
+My system prompt tells the LLM that it is a grounded RAG assistant and must answer only from the retrieved context. In `query.py`, the prompt says: “Use ONLY the retrieved context below to answer the question. Do not use outside knowledge. If the context does not contain enough information to answer, say exactly: ‘I don't have enough information in the provided sources to answer that.’” This prevents the model from making up answers when the retrieved chunks do not support the question.
 
 **How source attribution is surfaced in the response:**
-
+Each retrieved chunk includes metadata with the source filename and chunk index. The retrieved chunks are formatted with labels such as `[Source 1: butora_hangboard.txt | Chunk 2]` before being sent to the LLM. After the answer is generated, the app also displays the source filenames separately in the “Retrieved from” box, so source attribution is shown even if the model does not mention the source in the answer.
 ---
 
 ## Evaluation Report
@@ -255,11 +257,19 @@ My documents are all articles and separated by headers and paragraphs
 
 | # | Question | Expected answer | System response (summarized) | Retrieval quality | Response accuracy |
 |---|----------|-----------------|------------------------------|-------------------|-------------------|
-| 1 | | | | | |
-| 2 | | | | | |
-| 3 | | | | | |
-| 4 | | | | | |
-| 5 | | | | | |
+| 1 | | | | | |                    A flat shoe that is snug but comfy | Relevant    | Accurate
+| 2 | | | | | |                    Take rest days, warm up, fall on your back | Relevant | Accurate
+| 3 | | | | | |                    No, higher risk of energy and do it later on | Relevant | Accurate
+| 4 | | | | | |                    *Explained how to fall safely backwards | Relevant | Accurate
+| 5 | | | | | |                    *Explains the Yosemite decimal system correctly | Relevant | Accurate
+
+| # | Question | Expected answer |
+|---|----------|-----------------|
+| 1 | What type of climbing shoes are good for beginners? | Something about the shoes not being aggressive, comfortable fit, not downturned shoes. |
+| 2 | How can I prevent injury? | Make sure to warm up and take ample rest. |
+| 3 | Can I start hangboarding if I started climbing this week? | No, you should try to climb until you hit a plateu first, then do it. |
+| 4 | How should I fall down after a boulder? | You want to fall backwards, feet hitting the ground first then your back. |
+| 5 | What does 5.12a mean. | That is the Yosemite Decimal system and the 5 means you need a rope whilst the 12 means it is quite difficult. The a implies its an easier 5.12. |
 
 **Retrieval quality:** Relevant / Partially relevant / Off-target  
 **Response accuracy:** Accurate / Partially accurate / Inaccurate
@@ -280,45 +290,37 @@ My documents are all articles and separated by headers and paragraphs
      results from an unrelated review" is an explanation. -->
 
 **Question that failed:**
-
+How can I climb way faster.   NOTE: This one is weird because the question "How can I climb faster" works. Adding "way" in the sentence messes it up.
 **What the system returned:**
-
+I don't have enough information in the provided sources to answer that.
 **Root cause (tied to a specific pipeline stage):**
-
+This failure occurred during the retrieval stage. The embedding model (`all-MiniLM-L6-v2`) treated the query "How can I climb way faster?" differently from "How can I climb faster?" even though they have nearly the same meaning. The addition of the word "way" reduced the similarity between the query embedding and the relevant training and progression chunks in the vector database. As a result, the retrieval system returned weaker matches, causing the generation stage to conclude that there was not enough information available. This demonstrates a limitation of semantic retrieval, where small wording changes can sometimes affect which chunks are retrieved.
 **What you would change to fix it:**
-
+One possible improvement would be to increase the number of retrieved chunks (top-k) from 3 to 5 so that relevant training and progression chunks are more likely to be included even when the query wording changes. Another improvement would be to use a stronger embedding model that is better at recognizing semantic similarity between phrases such as "climb faster" and "climb way faster." Query preprocessing, such as removing filler words like "way," could also improve retrieval consistency.
 ---
 
 ## Spec Reflection
 
-<!-- Reflect on how planning.md shaped your implementation.
-     Answer both questions with at least 2–3 sentences each. -->
-
 **One way the spec helped you during implementation:**
 
+The planning document helped guide my implementation by forcing me to think through the architecture before writing any code. Defining my chunking strategy, retrieval approach, and evaluation questions ahead of time made it easier to build and test each stage incrementally. When retrieval results were not ideal, I could compare them against my original plan and make targeted adjustments instead of guessing.
+
 **One way your implementation diverged from the spec, and why:**
+
+My implementation diverged from the original spec in the chunking stage. Initially, I planned to use larger semantic chunks in the 300–600 word range, but during testing I found that some chunks became too broad and contained multiple topics. I adjusted the implementation to use paragraph-aware chunking with a target size of around 300 words and a 50-word overlap, which produced more focused chunks and improved retrieval quality.
 
 ---
 
 ## AI Usage
 
-<!-- Describe at least 2 specific instances where you used an AI tool during this project.
-     For each: what did you give the AI as input, what did it produce, and what did you
-     change, override, or direct differently?
-
-     "I used Claude to help me code" is not sufficient.
-     "I gave Claude my Chunking Strategy section from planning.md and asked it to implement
-     chunk_text(). It returned a function using a fixed character split. I overrode the
-     chunk size from 500 to 200 because my documents are short reviews, not long guides." -->
-
 **Instance 1**
 
-- *What I gave the AI:*
-- *What it produced:*
-- *What I changed or overrode:*
+- *What I gave the AI:* I provided my Documents section, Chunking Strategy section, and pipeline diagram from planning.md and asked for help implementing the ingestion and chunking stages.
+- *What it produced:* It produced an initial chunking implementation that split documents into fixed-size chunks based on word counts.
+- *What I changed or overrode:* After inspecting the output, I noticed that many chunks started in the middle of sentences and were difficult to understand on their own. I modified the implementation to preserve paragraph boundaries and create more self-contained chunks that were easier to retrieve and interpret.
 
 **Instance 2**
 
-- *What I gave the AI:*
-- *What it produced:*
-- *What I changed or overrode:*
+- *What I gave the AI:* I provided my Retrieval Approach section and asked for assistance implementing embeddings with `all-MiniLM-L6-v2`, storing vectors in ChromaDB, and creating a retrieval function.
+- *What it produced:* It generated an embedding pipeline, ChromaDB integration, and retrieval code that returned the most relevant chunks for a query.
+- *What I changed or overrode:* I tested retrieval using my evaluation questions and adjusted the retrieval settings to use `top-k = 3` instead of a larger value. I also modified the query pipeline so that the embedding model and vector store were loaded once at startup rather than reloaded for every query, improving performance and responsiveness.
