@@ -43,7 +43,7 @@ It covers a beginners guide to rock climbing. This includes tips for training, h
      A review-heavy corpus warrants different chunking than a long FAQ. -->
 
 **Chunk size:**
-My target chunk size will be about 200 words per chunk. This is large enough to keep a full explanation together, but small enough that the retrieval system can return focused results instead of an entire article. 
+My target chunk size will be about 300 words per chunk. This is large enough to keep a full explanation together, but small enough that the retrieval system can return focused results instead of an entire article. 
 
 **Overlap:**
 I will use an overlap of 50 words between chunks when a section has to be split. This helps prevent important context from being lost between two chunks. For shorter sections that fit naturally into one chunk, I will not need overlap.
@@ -115,8 +115,8 @@ I would consider a stronger embedding model than all-MiniLM-L6-v2. I would compa
         v
 [Chunking]
 - Semantic section-based chunking
-- Target size: 300–600 words
-- Overlap: 50–100 words when splitting long sections
+- Target size: 300 words
+- Overlap: 50 words when splitting long sections
         |
         v
 [Embedding + Vector Store]
@@ -128,7 +128,7 @@ I would consider a stronger embedding model than all-MiniLM-L6-v2. I would compa
 [Retrieval]
 - User question enters system
 - Semantic similarity search in ChromaDB
-- Retrieve top-k = 5 chunks
+- Retrieve top-k = 3 chunks
         |
         v
 [Generation]

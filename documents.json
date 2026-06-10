@@ -1,0 +1,52 @@
+[
+  {
+    "id": "rei_getting_started",
+    "title": "REI - How to Start Climbing",
+    "url": "https://www.rei.com/learn/expert-advice/getting-started-rock-climbing.html"
+  },
+  {
+    "id": "rei_bouldering",
+    "title": "REI - How to Start Bouldering",
+    "url": "https://www.rei.com/learn/expert-advice/bouldering.html"
+  },
+  {
+    "id": "ascend_etiquette",
+    "title": "Ascend - Climbing Etiquette",
+    "url": "https://www.ascendclimbing.com/your-visit/rules-etiquette"
+  },
+  {
+    "id": "sportrock_grades",
+    "title": "SportRock - Climbing Grades",
+    "url": "https://www.sportrock.com/post/understanding-climbing-grades"
+  },
+  {
+    "id": "climbing_beginner_shoes",
+    "title": "Climbing Magazine - Beginner Climbing Shoes",
+    "url": "https://www.climbing.com/gear/best-beginner-climbing-shoes/"
+  },
+  {
+    "id": "breakinginmyshoes_training",
+    "title": "BreakingInMyShoes - Training Guide",
+    "url": "https://breakinginmyshoes.wordpress.com/2013/05/06/climbing-training-for-beginners/"
+  },
+  {
+    "id": "fivelife_fear_heights",
+    "title": "5.Life - Fear of Heights When Climbing",
+    "url": "https://5.life/blog/2024/07/26/3-tips-to-overcome-your-fear-of-heights/"
+  },
+  {
+    "id": "rockclimbingrealms_v4_guide",
+    "title": "RockClimbingRealms - Beginner to V4 Guide",
+    "url": "https://rockclimbingrealms.com/tips-on-rock-climbing/"
+  },
+  {
+    "id": "butora_hangboard",
+    "title": "Butora - When to Hangboard Train",
+    "url": "https://butorausa.com/blogs/beta-blog/when-to-hangboard"
+  },
+  {
+    "id": "climbing_beginner_mistakes",
+    "title": "Climbing Magazine - Typical Climbing Mistakes",
+    "url": "https://www.climbing.com/skills/7-beginner-climber-mistakes/"
+  }
+]
